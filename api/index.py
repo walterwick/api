@@ -1,14 +1,16 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import requests
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
-@app.route('/', methods=['GET'])
+@app.route('/geolocation', methods=['GET'])
 def geolocation():
-    # IP tabanlı verileri ipapi.co üzerinden almak
+    # Fetch IP-based data from ipapi.co
     ip_info = requests.get("https://ipapi.co/json/").json()
 
-    # Tarayıcı bilgilerini ve diğer başlıkları almak
+    # Gather additional information from request headers
     data = {
         "ip": ip_info.get("ip"),
         "country": ip_info.get("country_name"),
