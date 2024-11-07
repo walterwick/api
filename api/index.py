@@ -6,8 +6,6 @@ from binance.client import Client
 app = Flask(__name__)
 
 # API anahtarlarınızı buraya girin
-api_key = 'euvGixx7QPNwGhg5wBJVes96KXhYXotSNWUrf9lQj12vFJkiqM5KpsNR1YzdVSwN'
-api_secret = 'rybPivNai7C8ihv5l0TBmlh1h0HQ6psJQx89vy2iCjjcuJXRUZmjMGRIgf3jQzVM'
 
 @app.route('/')
 def index():
