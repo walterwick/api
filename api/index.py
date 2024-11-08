@@ -88,7 +88,7 @@ def index():
             </table>
             <h3>Toplam Değer (USD): {{ total_value_in_usd }}</h3>
             {% if total_value_in_try is not none %}
-                <h3>Toplam Değer (TRY): {{ total_value_in_try }}</h3>
+                <h3>Toplam Değer: (TRY): {{ total_value_in_try }}</h3>
             {% endif %}
         {% endif %}
     </body>
