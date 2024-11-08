@@ -1,11 +1,17 @@
-
-
 from flask import Flask, render_template_string
 from binance.client import Client
+from dotenv import load_dotenv
+import os
+import requests
+
+# .env dosyasını yükle
+load_dotenv()
+
+# API anahtarlarını .env dosyasından al
+api_key = os.getenv('API_KEY')
+api_secret = os.getenv('API_SECRET')
 
 app = Flask(__name__)
-
-# API anahtarlarınızı buraya girin
 
 @app.route('/')
 def index():
@@ -41,6 +47,14 @@ def index():
             })
             total_value_in_usd += value_in_usd
 
+    # USDT/TRY fiyatını Binance API üzerinden alın
+    try:
+        usdt_try_price = float(requests.get("https://api.binance.com/api/v3/ticker/price?symbol=USDTTRY").json()['price'])
+        total_value_in_try = total_value_in_usd * usdt_try_price
+    except Exception as e:
+        print(f"USDT/TRY fiyatı alınamadı: {e}")
+        total_value_in_try = None
+
     # HTML içeriği
     html_content = '''
     <!DOCTYPE html>
@@ -48,7 +62,7 @@ def index():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Binance Bakiye Kontrol</title>
+        <title>"{{ total_value_in_usd }}"</title>
     </head>
     <body>
         <h1>Binance Bakiye Kontrol</h1>
@@ -73,12 +87,15 @@ def index():
                 {% endfor %}
             </table>
             <h3>Toplam Değer (USD): {{ total_value_in_usd }}</h3>
+            {% if total_value_in_try is not none %}
+                <h3>Toplam Değer (TRY): {{ total_value_in_try }}</h3>
+            {% endif %}
         {% endif %}
     </body>
     </html>
     '''
 
-    return render_template_string(html_content, balances=balances, total_value_in_usd=total_value_in_usd)
+    return render_template_string(html_content, balances=balances, total_value_in_usd=total_value_in_usd, total_value_in_try=total_value_in_try)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)
