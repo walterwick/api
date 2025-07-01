@@ -498,11 +498,12 @@ def index():
             const chartData = {{ chart_data | tojson }};
             
             // Renk paleti
-            const colors = [
-                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-                '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384',
-                '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
-            ];
+const colors = [
+    '#FF6384','#36A2EB','#FFCE56','#4BC0C0','#9966FF','#FF9F40',
+    '#b02f21','#8DD17E','#D65DB1','#FF6F61','#6B5B95','#88B04B',
+    '#F7CAC9','#92A8D1','#955251','#B565A7','#009B77','#DD4124','#45B8AC','#EFC050' 
+];
+
 
             const ctx = document.getElementById('portfolioChart').getContext('2d');
             const portfolioChart = new Chart(ctx, {
