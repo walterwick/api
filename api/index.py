@@ -199,7 +199,7 @@ def index():
             }
             .modal-content {
                 background-color: #fefefe;
-                margin: 10% auto;
+                margin: 5% auto;
                 padding: 20px;
                 border-radius: 10px;
                 width: 90%;
