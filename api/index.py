@@ -207,7 +207,6 @@ def index():
                 text-align: center;
                 position: relative;
                 max-height: 80vh;
-                overflow-y: auto;
             }
             .close {
                 color: #aaa;
