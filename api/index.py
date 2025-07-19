@@ -92,7 +92,7 @@ def index():
             }
             .main-container {
                 max-width: 1400px;
-                margin: 0 auto;
+                margin: 2% auto;
             }
             .container {
                 display: grid;
@@ -477,8 +477,6 @@ def index():
                     <h4>📊 24 Saat İstatistikleri</h4>
                     <p><strong>Yüksek:</strong> <span id="high24h">-</span></p>
                     <p><strong>Düşük:</strong> <span id="low24h">-</span></p>
-                    <p><strong>Hacim:</strong> <span id="volume24h">-</span></p>
-                    <p><strong>İşlem Sayısı:</strong> <span id="count24h">-</span></p>
                 </div>
 
                 <div class="mini-chart">
