@@ -649,7 +649,7 @@ const colors = [
                 }
 
                 try {
-                    const response = await fetch(`https://api.binance.com/api/v3/klines?symbol=${coin}USDT&interval=1d&limit=7`);
+                    const response = await fetch(`https://api.binance.com/api/v3/klines?symbol=${coin}USDT&interval=1d&limit=12`);
                     const data = await response.json();
                     
                     const prices = data.map(kline => parseFloat(kline[4])); // Close price
