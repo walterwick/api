@@ -200,15 +200,14 @@ def index():
                 background-color: #fefefe;
                 color: #333;
                 margin: 5% auto;
-                padding: 20px;
+                padding: 15px; /* Reduced padding to save space */
                 border-radius: 10px;
                 width: 90%;
                 max-width: 500px;
                 text-align: center;
                 position: relative;
-                max-height: 80vh;
-                overflow-y: auto;
-            }
+                max-height: 85vh;
+           }
             .close {
                 color: #aaa;
                 float: right;
@@ -253,7 +252,7 @@ def index():
             }
             .percentage {
                 background: #e7f3ff;
-                padding: 2px 6[order:1;1;10000]6px;
+                padding: 2px 6px;
                 border-radius: 4px;
                 font-weight: bold;
                 font-size: 12px;
@@ -365,6 +364,10 @@ def index():
                     width: 95%;
                     margin: 5% auto;
                     max-height: 90vh;
+                    padding: 10px; /* Further reduced padding for mobile */
+                }
+                .mini-chart {
+                    height: 180px; /* Slightly smaller for mobile */
                 }
             }
 
@@ -392,6 +395,12 @@ def index():
                 .refresh-btn, .time-range-select {
                     font-size: 14px;
                     padding: 10px 20px;
+                }
+                .modal-content {
+                    padding: 8px; /* Minimal padding for very small screens */
+                }
+                .mini-chart {
+                    height: 160px; /* Further reduced for very small screens */
                 }
             }
         </style>
@@ -696,7 +705,20 @@ def index():
                             y: {
                                 beginAtZero: false,
                                 min: 0.99,
-                                max: 1.01
+                                max: 1.01,
+                                ticks: {
+                                    font: {
+                                        size: 10 // Smaller font for USDT chart
+                                    },
+                                    padding: 5 // Reduced padding
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    font: {
+                                        size: 10
+                                    }
+                                }
                             }
                         }
                     }
@@ -712,6 +734,18 @@ def index():
                 const firstPrice = data[0];
                 const lastPrice = data[data.length - 1];
                 const isUp = lastPrice > firstPrice;
+
+                // Dinamik ondalık basamak sayısı
+                const maxPrice = Math.max(...data);
+                const decimalPlaces = maxPrice > 100 ? 2 : maxPrice > 1 ? 4 : 6;
+
+                // Büyük sayılar için kısaltma (ör. 12000 -> 12K)
+                function formatPrice(value) {
+                    if (value >= 1000) {
+                        return '$' + (value / 1000).toFixed(1) + 'K';
+                    }
+                    return '$' + value.toFixed(decimalPlaces);
+                }
 
                 miniChart = new Chart(ctx, {
                     type: 'line',
@@ -743,14 +777,36 @@ def index():
                                 beginAtZero: false,
                                 ticks: {
                                     callback: function(value) {
-                                        return '$' + value.toFixed(6);
-                                    }
+                                        return formatPrice(value);
+                                    },
+                                    font: {
+                                        size: 10 // Smaller font size for y-axis ticks
+                                    },
+                                    padding: 5, // Reduced padding to save space
+                                    maxTicksLimit: 6 // Limit number of ticks
+                                },
+                                grid: {
+                                    drawBorder: false
                                 }
                             },
                             x: {
                                 ticks: {
-                                    maxTicksLimit: days === 30 ? 10 : days === 14 ? 7 : 3
+                                    maxTicksLimit: days === 30 ? 10 : days === 14 ? 7 : 3,
+                                    font: {
+                                        size: 10 // Smaller font for x-axis
+                                    }
+                                },
+                                grid: {
+                                    drawBorder: false
                                 }
+                            }
+                        },
+                        layout: {
+                            padding: {
+                                left: 0, // Minimize left padding
+                                right: 10,
+                                top: 10,
+                                bottom: 10
                             }
                         },
                         interaction: {
