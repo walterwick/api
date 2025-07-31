@@ -89,6 +89,7 @@ def index():
                 margin: 0;
                 padding: 10px;
                 background-color: #f5f5f5;
+                color: #333;
             }
             .main-container {
                 max-width: 1400px;
@@ -101,13 +102,13 @@ def index():
                 margin-top: 20px;
             }
             .table-container {
-                background: white;
+                background: #ffffff;
                 border-radius: 10px;
                 box-shadow: 0 2px 10px rgba(0,0,0,0.1);
                 overflow: hidden;
             }
             .chart-container {
-                background: white;
+                background: #ffffff;
                 padding: 20px;
                 border-radius: 10px;
                 box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -131,7 +132,6 @@ def index():
             th {
                 background-color: #f8f9fa;
                 font-weight: bold;
-                color: #333;
                 position: sticky;
                 top: 0;
             }
@@ -141,7 +141,6 @@ def index():
             .header {
                 text-align: center;
                 margin-bottom: 20px;
-                color: #333;
             }
             .header h1 {
                 margin: 0;
@@ -162,7 +161,7 @@ def index():
                 margin: 10px 0;
                 font-size: 16px;
             }
-            .refresh-btn {
+            .refresh-btn, .time-range-select {
                 background: #007bff;
                 color: white;
                 border: none;
@@ -174,7 +173,7 @@ def index():
                 width: 100%;
                 max-width: 200px;
             }
-            .refresh-btn:hover {
+            .refresh-btn:hover, .time-range-select:hover {
                 background: #0056b3;
             }
             .coin-name {
@@ -199,6 +198,7 @@ def index():
             }
             .modal-content {
                 background-color: #fefefe;
+                color: #333;
                 margin: 5% auto;
                 padding: 20px;
                 border-radius: 10px;
@@ -207,6 +207,7 @@ def index():
                 text-align: center;
                 position: relative;
                 max-height: 80vh;
+                overflow-y: auto;
             }
             .close {
                 color: #aaa;
@@ -219,7 +220,7 @@ def index():
                 top: 10px;
             }
             .close:hover {
-                color: black;
+                color: #333;
             }
             .price-info {
                 margin: 20px 0;
@@ -252,7 +253,7 @@ def index():
             }
             .percentage {
                 background: #e7f3ff;
-                padding: 2px 6px;
+                padding: 2px 6[order:1;1;10000]6px;
                 border-radius: 4px;
                 font-weight: bold;
                 font-size: 12px;
@@ -262,7 +263,6 @@ def index():
                 margin: 0;
                 background: #f8f9fa;
                 font-size: 18px;
-                color: #333;
             }
             .mini-chart {
                 width: 100%;
@@ -278,11 +278,9 @@ def index():
             }
             .coin-info h4 {
                 margin-top: 0;
-                color: #333;
             }
             .coin-info p {
                 margin: 5px 0;
-                color: #666;
             }
             .websocket-status {
                 position: absolute;
@@ -391,7 +389,7 @@ def index():
                     padding: 3px 1px;
                     font-size: 10px;
                 }
-                .refresh-btn {
+                .refresh-btn, .time-range-select {
                     font-size: 14px;
                     padding: 10px 20px;
                 }
@@ -479,6 +477,12 @@ def index():
                     <p><strong>Düşük:</strong> <span id="low24h">-</span></p>
                 </div>
 
+                <select class="time-range-select" onchange="loadChartData(currentCoin, this.value)">
+                    <option value="30">Son 1 Ay</option>
+                    <option value="14">Son 2 Hafta</option>
+                    <option value="3">Son 3 Gün</option>
+                </select>
+
                 <div class="mini-chart">
                     <canvas id="miniChart"></canvas>
                 </div>
@@ -495,12 +499,11 @@ def index():
             const chartData = {{ chart_data | tojson }};
             
             // Renk paleti
-const colors = [
-    '#FF6384','#36A2EB','#FFCE56','#4BC0C0','#9966FF','#FF9F40',
-    '#b02f21','#8DD17E','#D65DB1','#FF6F61','#6B5B95','#88B04B',
-    '#F7CAC9','#92A8D1','#955251','#B565A7','#009B77','#DD4124','#45B8AC','#EFC050' 
-];
-
+            const colors = [
+                '#FF6384','#36A2EB','#FFCE56','#4BC0C0','#9966FF','#FF9F40',
+                '#b02f21','#8DD17E','#D65DB1','#FF6F61','#6B5B95','#88B04B',
+                '#F7CAC9','#92A8D1','#955251','#B565A7','#009B77','#DD4124','#45B8AC','#EFC050' 
+            ];
 
             const ctx = document.getElementById('portfolioChart').getContext('2d');
             const portfolioChart = new Chart(ctx, {
@@ -551,12 +554,13 @@ const colors = [
                 currentCoin = coin;
                 document.getElementById('coinModal').style.display = 'block';
                 document.getElementById('coinTitle').textContent = coin + ' Detay Bilgileri';
+                document.querySelector('.time-range-select').value = '30'; // Varsayılan 1 ay
                 
                 // WebSocket bağlantısını başlat
                 connectWebSocket(coin);
                 
-                // 7 günlük veri al
-                load7DayChart(coin);
+                // 1 aylık veri al (varsayılan)
+                loadChartData(coin, 30);
                 
                 // 24 saat istatistiklerini al
                 load24hStats(coin);
@@ -623,8 +627,6 @@ const colors = [
                 if (coin === 'USDT') {
                     document.getElementById('high24h').textContent = '$1.0000';
                     document.getElementById('low24h').textContent = '$1.0000';
-                    document.getElementById('volume24h').textContent = 'N/A';
-                    document.getElementById('count24h').textContent = 'N/A';
                     return;
                 }
 
@@ -634,22 +636,20 @@ const colors = [
                     
                     document.getElementById('high24h').textContent = '$' + parseFloat(data.highPrice).toFixed(6);
                     document.getElementById('low24h').textContent = '$' + parseFloat(data.lowPrice).toFixed(6);
-                    document.getElementById('volume24h').textContent = parseFloat(data.volume).toLocaleString();
-                    document.getElementById('count24h').textContent = parseInt(data.count).toLocaleString();
                 } catch (error) {
                     console.error('24h stats yüklenemedi:', error);
                 }
             }
 
-            async function load7DayChart(coin) {
+            async function loadChartData(coin, days) {
                 if (coin === 'USDT') {
-                    // USDT için düz çizgi göster
                     createFlatChart();
                     return;
                 }
 
                 try {
-                    const response = await fetch(`https://api.binance.com/api/v3/klines?symbol=${coin}USDT&interval=1d&limit=32`);
+                    const limit = days === 30 ? 32 : days === 14 ? 15 : 10; // 1 ay için 32, 2 hafta için 15, 3 gün için 10 veri noktası
+                    const response = await fetch(`https://api.binance.com/api/v3/klines?symbol=${coin}USDT&interval=1d&limit=${limit}`);
                     const data = await response.json();
                     
                     const prices = data.map(kline => parseFloat(kline[4])); // Close price
@@ -658,10 +658,10 @@ const colors = [
                         return date.toLocaleDateString('tr-TR', { month: 'short', day: 'numeric' });
                     });
                     
-                    createMiniChart(dates, prices, coin);
+                    createMiniChart(dates.slice(-days), prices.slice(-days), coin, days);
                 } catch (error) {
-                    console.error('7 günlük veri yüklenemedi:', error);
-                    document.querySelector('.mini-chart').innerHTML = '<p style="text-align: center; color: #666;">Grafik yüklenemedi</p>';
+                    console.error(`${days} günlük veri yüklenemedi:`, error);
+                    document.querySelector('.mini-chart').innerHTML = '<p style="text-align: center;">Grafik yüklenemedi</p>';
                 }
             }
 
@@ -703,7 +703,7 @@ const colors = [
                 });
             }
 
-            function createMiniChart(labels, data, coin) {
+            function createMiniChart(labels, data, coin, days) {
                 const ctx = document.getElementById('miniChart').getContext('2d');
                 if (miniChart) {
                     miniChart.destroy();
@@ -718,7 +718,7 @@ const colors = [
                     data: {
                         labels: labels,
                         datasets: [{
-                            label: coin + ' Fiyat (7 Gün)',
+                            label: coin + ' Fiyat (' + (days === 30 ? '1 Ay' : days === 14 ? '2 Hafta' : '3 Gün') + ')',
                             data: data,
                             borderColor: isUp ? '#28a745' : '#dc3545',
                             backgroundColor: isUp ? 'rgba(40, 167, 69, 0.1)' : 'rgba(220, 53, 69, 0.1)',
@@ -745,6 +745,11 @@ const colors = [
                                     callback: function(value) {
                                         return '$' + value.toFixed(6);
                                     }
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    maxTicksLimit: days === 30 ? 10 : days === 14 ? 7 : 3
                                 }
                             }
                         },
