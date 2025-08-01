@@ -200,7 +200,7 @@ def index():
                 background-color: #fefefe;
                 color: #333;
                 margin: 5% auto;
-                padding: 15px; /* Reduced padding to save space */
+                padding: 15px;
                 border-radius: 10px;
                 width: 90%;
                 max-width: 500px;
@@ -364,10 +364,10 @@ def index():
                     width: 95%;
                     margin: 5% auto;
                     max-height: 90vh;
-                    padding: 10px; /* Further reduced padding for mobile */
+                    padding: 10px;
                 }
                 .mini-chart {
-                    height: 180px; /* Slightly smaller for mobile */
+                    height: 180px;
                 }
             }
 
@@ -397,10 +397,10 @@ def index():
                     padding: 10px 20px;
                 }
                 .modal-content {
-                    padding: 8px; /* Minimal padding for very small screens */
+                    padding: 8px;
                 }
                 .mini-chart {
-                    height: 160px; /* Further reduced for very small screens */
+                    height: 160px;
                 }
             }
         </style>
@@ -487,8 +487,8 @@ def index():
                 </div>
 
                 <select class="time-range-select" onchange="loadChartData(currentCoin, this.value)">
-                    <option value="30">Son 1 Ay</option>
-                    <option value="14">Son 2 Hafta</option>
+                    <option value="31">Son 31 Gün</option>
+                    <option value="14">Son 14 Gün</option>
                     <option value="3">Son 3 Gün</option>
                 </select>
 
@@ -563,13 +563,13 @@ def index():
                 currentCoin = coin;
                 document.getElementById('coinModal').style.display = 'block';
                 document.getElementById('coinTitle').textContent = coin + ' Detay Bilgileri';
-                document.querySelector('.time-range-select').value = '30'; // Varsayılan 1 ay
+                document.querySelector('.time-range-select').value = '31'; // Varsayılan 31 gün
                 
                 // WebSocket bağlantısını başlat
                 connectWebSocket(coin);
                 
-                // 1 aylık veri al (varsayılan)
-                loadChartData(coin, 30);
+                // 31 günlük veri al (varsayılan)
+                loadChartData(coin, 31);
                 
                 // 24 saat istatistiklerini al
                 load24hStats(coin);
@@ -657,7 +657,7 @@ def index():
                 }
 
                 try {
-                    const limit = days === 30 ? 32 : days === 14 ? 15 : 10; // 1 ay için 32, 2 hafta için 15, 3 gün için 10 veri noktası
+                    const limit = days == 31 ? 32 : days == 14 ? 15 : 10; // 31 gün için 32, 14 gün için 15, 3 gün için 10 veri noktası
                     const response = await fetch(`https://api.binance.com/api/v3/klines?symbol=${coin}USDT&interval=1d&limit=${limit}`);
                     const data = await response.json();
                     
@@ -708,9 +708,9 @@ def index():
                                 max: 1.01,
                                 ticks: {
                                     font: {
-                                        size: 10 // Smaller font for USDT chart
+                                        size: 10
                                     },
-                                    padding: 5 // Reduced padding
+                                    padding: 5
                                 }
                             },
                             x: {
@@ -752,7 +752,7 @@ def index():
                     data: {
                         labels: labels,
                         datasets: [{
-                            label: coin + ' Fiyat (' + (days === 30 ? '1 Ay' : days === 14 ? '2 Hafta' : '3 Gün') + ')',
+                            label: coin + ' Fiyat (' + (days == 31 ? '31 Gün' : days == 14 ? '14 Gün' : '3 Gün') + ')',
                             data: data,
                             borderColor: isUp ? '#28a745' : '#dc3545',
                             backgroundColor: isUp ? 'rgba(40, 167, 69, 0.1)' : 'rgba(220, 53, 69, 0.1)',
@@ -780,10 +780,10 @@ def index():
                                         return formatPrice(value);
                                     },
                                     font: {
-                                        size: 10 // Smaller font size for y-axis ticks
+                                        size: 10
                                     },
-                                    padding: 5, // Reduced padding to save space
-                                    maxTicksLimit: 6 // Limit number of ticks
+                                    padding: 5,
+                                    maxTicksLimit: 6
                                 },
                                 grid: {
                                     drawBorder: false
@@ -791,9 +791,9 @@ def index():
                             },
                             x: {
                                 ticks: {
-                                    maxTicksLimit: days === 30 ? 10 : days === 14 ? 7 : 3,
+                                    maxTicksLimit: days == 31 ? 10 : days == 14 ? 7 : 3,
                                     font: {
-                                        size: 10 // Smaller font for x-axis
+                                        size: 10
                                     }
                                 },
                                 grid: {
@@ -803,7 +803,7 @@ def index():
                         },
                         layout: {
                             padding: {
-                                left: 0, // Minimize left padding
+                                left: 0,
                                 right: 10,
                                 top: 10,
                                 bottom: 10
